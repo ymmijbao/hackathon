@@ -1,7 +1,7 @@
 package com.handsoap.voicial;
 
+import android.app.ActionBar;
 import android.app.Activity;
-import android.app.IntentService;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -36,7 +36,13 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_text); // Change this later 
+		setContentView(R.layout.activity_main); 
+		
+		/** Hide the unnecessary ActionBar **/
+		View decorView = getWindow().getDecorView();
+		decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+		ActionBar actionBar = getActionBar();
+		actionBar.hide();
 
 		mContinuousRecognizer = new MySpeechRecognizer(getApplicationContext());
 		mContinuousRecognizer.setContinuousRecognizerCallback(this);
