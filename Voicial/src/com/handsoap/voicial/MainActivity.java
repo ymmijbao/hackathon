@@ -6,11 +6,11 @@ import java.util.Locale;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
+import android.provider.Telephony;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.telephony.SmsManager;
@@ -64,9 +64,6 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 		/** Creating the Text-to_Speech object **/
 		tts = new TextToSpeech(this, this);
 		tts.setLanguage(Locale.US);
-		
-		/** Register a new broadcast receiver so that we're notified of incoming SMS messages. **/
-		registerReceiver(recv, null);
 	}
 
 	@Override
@@ -89,10 +86,14 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 		return true;
 	}
 
-	private String getPhoneNumber(String result, int offset)
-	{
+	private String getPhoneNumber(String result, int offset) {
 		String name = result.substring(offset);
 		cur_name = name;
+		
+		if ((name == null) || (name.length() == 0)) {
+			return null;
+		}
+		
 		return ContactLookup.lookUp(name, getApplicationContext());
 	}
 	
@@ -114,8 +115,6 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 			if (result.startsWith(READ_TXT_CMD)) {
 				number = getPhoneNumber(result, READ_TXT_OFFSET);
 				if (number != null) {
-					
-					//mContinuousRecognizer.stopListening();
 					Uri uri = Uri.parse("content://sms/inbox");
 					String[] projection = new String[]{"_id", "address", "person", "body", "date"};
 					
@@ -155,7 +154,6 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 			} else if (result.startsWith(CALL_CMD)) {
 				number = getPhoneNumber(result, CALL_OFFSET);
 				if (number != null) {
-					//mContinuousRecognizer.stopListening();
 					Intent callIntent = new Intent(Intent.ACTION_CALL);
 					callIntent.setData(Uri.parse("tel:"+number));
 					startActivity(callIntent);
@@ -167,6 +165,5 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	@Override
 	public void onInit(int status) {
 		// TODO Auto-generated method stub
-		
 	}
 }

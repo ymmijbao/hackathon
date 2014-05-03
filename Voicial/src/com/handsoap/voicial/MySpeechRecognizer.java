@@ -66,7 +66,7 @@ public class MySpeechRecognizer implements RecognitionListener {
 		Log.d(TAG, "onError");
 		Log.d(TAG, "error: " + String.valueOf(arg0));
 		
-		if (arg0 == SpeechRecognizer.ERROR_NO_MATCH) {
+		if ((arg0 == SpeechRecognizer.ERROR_NO_MATCH) || (arg0 == SpeechRecognizer.ERROR_SPEECH_TIMEOUT)) {
 			mRecognizer.destroy();
 			mRecognizer = SpeechRecognizer.createSpeechRecognizer(mContext);
 			mRecognizer.setRecognitionListener(this);
