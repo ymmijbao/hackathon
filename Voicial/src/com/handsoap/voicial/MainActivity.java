@@ -120,19 +120,4 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 			}
 		}	
 	}
-	
-	public class RSSPullService extends IntentService {
-
-		public RSSPullService(String name) {
-			super(name);
-			// TODO Auto-generated constructor stub
-		}
-
-		@Override
-		protected void onHandleIntent(Intent workIntent) {
-			
-		}
-		
-	}
-	
 }

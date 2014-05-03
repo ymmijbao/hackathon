@@ -27,20 +27,16 @@ public class ContactLookup {
 	    	String contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
 	    	Cursor phones = cr.query(Phone.CONTENT_URI, null, Phone.CONTACT_ID + " = " + contactId, null, null);
 		
-	    	while (phones.moveToNext()) {
+	    	PHONE_LOOP: while (phones.moveToNext()) {
 	    		number = phones.getString(phones.getColumnIndex(Phone.NUMBER));
 	    		int type = phones.getInt(phones.getColumnIndex(Phone.TYPE));
 				  
-				  /**
-				  switch (type) {
-				      case Phone.TYPE_HOME:
-				    	  break;
-				      case Phone.TYPE_MOBILE:
-				    	  
-				      case Phone.TYPE_WORK:
-				    	  break;
-				  }
-				  **/
+				switch (type) {
+				    case Phone.TYPE_MOBILE:
+				    	break PHONE_LOOP;
+				    default:
+				    	break;
+				}
 	    	}
 			  
 	    	phones.close();
@@ -48,6 +44,10 @@ public class ContactLookup {
 	    }
 	    
 	    cursor.close();
+	    
+	    if (number == null) {
+	    	return null;
+	    }
 	    
 	    return number.replace("-", "");
 	}
