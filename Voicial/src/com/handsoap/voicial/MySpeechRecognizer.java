@@ -36,6 +36,7 @@ public class MySpeechRecognizer implements RecognitionListener {
 	}
 
 	public void stopListening() {
+		System.out.println("Printing this shit!");
 		mRecognizer.stopListening();
 		mRecognizer.cancel();
 	}
@@ -57,13 +58,21 @@ public class MySpeechRecognizer implements RecognitionListener {
 	@Override
 	public void onEndOfSpeech() {
 		// AUTO-GENERATED STUB
+		System.out.println("Done recording!");
 	}
 
 	@Override
 	public void onError(int arg0) {
 		// AUTO-GENERATED STUB
-		//Log.d(TAG, "onError");
-		//Log.d(TAG, "error: " + String.valueOf(arg0));
+		Log.d(TAG, "onError");
+		Log.d(TAG, "error: " + String.valueOf(arg0));
+		
+		if (arg0 == SpeechRecognizer.ERROR_NO_MATCH) {
+			mRecognizer.destroy();
+			mRecognizer = SpeechRecognizer.createSpeechRecognizer(mContext);
+			mRecognizer.setRecognitionListener(this);
+			listen();
+		}
 	}
 
 	@Override

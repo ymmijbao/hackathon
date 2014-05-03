@@ -2,6 +2,7 @@ package com.handsoap.voicial;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -46,36 +48,18 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 
 		mContinuousRecognizer = new MySpeechRecognizer(getApplicationContext());
 		mContinuousRecognizer.setContinuousRecognizerCallback(this);
-
-		mResultTextView = (TextView) findViewById(R.id.resultText);
-		mListenButton = (Button) findViewById(R.id.listenButton);
-		mListenButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				bIsListening = !bIsListening;
-				if (bIsListening) {
-					mListenButton.setText("Stop");
-					mContinuousRecognizer.startListening();
-				} else {
-					mListenButton.setText("Listen");
-					mContinuousRecognizer.stopListening();
-				}
-			}
-		});
 	}
 
-	//@Override
-	//public void onPause() {
-		//super.onPause();
-		//mContinuousRecognizer.stopListening();
-		//bIsListening = false;
-		//mListenButton.setText("Listen");
-	//}
+	@Override
+	public void onPause() {
+		super.onPause();
+		mContinuousRecognizer.stopListening();
+	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		mContinuousRecognizer.startListening();
 	}
 
@@ -100,6 +84,8 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 				text_buffer = new StringBuilder(); 
 				cur_num = "";
 				is_sending_txt = false;
+				
+				// Do text to speech to confirm or edit message or something
 			} else {
 				text_buffer.append(result + " ");
 			}
@@ -108,10 +94,10 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 			if (result.startsWith(READ_TXT_CMD)) {
 				number = getPhoneNumber(result, READ_TXT_OFFSET);
 				if (number != null) {
-					mContinuousRecognizer.stopListening();
+					//mContinuousRecognizer.stopListening();
 					Uri uri = Uri.parse("content://sms/inbox");
 					String[] projection = new String[]{"_id", "address", "person", "body", "date"};
-					Cursor cur = getContentResolver().query(uri, projection, "address='+1" + number + "'", null, null);
+					Cursor cur = getContentResolver().query(uri, projection, "address='+1" + number + "' AND read=0", null, null);
 					
 					if (cur.moveToFirst()) {
 						do {
@@ -119,10 +105,19 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 							String body = cur.getString(cur.getColumnIndex("body"));
 							System.out.println(address);
 							System.out.println(body);
+							
+							String SmsMessageId = cur.getString(cur.getColumnIndex("_id"));
+							
+							System.out.println(SmsMessageId);
+							ContentValues values = new ContentValues();
+							values.put("read", true);
+							getContentResolver().update(uri, values, "_id=" + SmsMessageId, null);
+							
+							// Do text to speech 
 						} while (cur.moveToNext());
 					}
 					
-					mContinuousRecognizer.startListening();
+					//mContinuousRecognizer.startListening();
 				}
 			} else if (result.startsWith(SEND_TXT_CMD)) {
 				number = getPhoneNumber(result, SEND_TXT_OFFSET);
@@ -133,7 +128,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 			} else if (result.startsWith(CALL_CMD)) {
 				number = getPhoneNumber(result, CALL_OFFSET);
 				if (number != null) {
-					mContinuousRecognizer.stopListening();
+					//mContinuousRecognizer.stopListening();
 					Intent callIntent = new Intent(Intent.ACTION_CALL);
 					callIntent.setData(Uri.parse("tel:"+number));
 					startActivity(callIntent);
