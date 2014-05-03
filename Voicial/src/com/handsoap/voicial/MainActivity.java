@@ -1,9 +1,10 @@
 package com.handsoap.voicial;
 
+import android.app.Activity;
+import android.app.IntentService;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Activity;
-import android.content.Intent;
 import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.View;
@@ -56,13 +57,13 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 		});
 	}
 
-	@Override
-	public void onPause() {
-		super.onPause();
-		mContinuousRecognizer.stopListening();
-		bIsListening = false;
-		mListenButton.setText("Listen");
-	}
+	//@Override
+	//public void onPause() {
+		//super.onPause();
+		//mContinuousRecognizer.stopListening();
+		//bIsListening = false;
+		//mListenButton.setText("Listen");
+	//}
 	
 	@Override
 	public void onResume() {
@@ -86,7 +87,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 				is_sending_txt = false;
 			} else {
 				System.out.print(result);
-				text_buffer.append(result);
+				text_buffer.append(result + " ");
 			}
 		} else {			
 			if (result.startsWith(READ_TXT_CMD)) {
@@ -102,11 +103,10 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 			} else if (result.startsWith(SEND_TXT_CMD)) {
 				System.out.println("result starts with send!");
 				String name = result.substring(SEND_TXT_OFFSET);
-				is_sending_txt = true;
 				String number = ContactLookup.lookUp(name, getApplicationContext());
 				
 				if (number != null) {
-					SmsManager.getDefault().sendTextMessage(number.replace("-", ""), null, "wassup bitch!!!", null, null);
+					is_sending_txt = true;
 				}
 				
 			} else if (result.startsWith(CALL_CMD)) {
@@ -123,4 +123,19 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 			}
 		}	
 	}
+	
+	public class RSSPullService extends IntentService {
+
+		public RSSPullService(String name) {
+			super(name);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		protected void onHandleIntent(Intent workIntent) {
+			
+		}
+		
+	}
+	
 }
