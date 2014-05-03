@@ -117,7 +117,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 					}
 					
 					Cursor cur = getContentResolver().query(uri, projection, selector, null, null);
-					
+					boolean alreadySetId = false;
 					if (cur.moveToFirst()) {
 						do {
 							String address = cur.getString(cur.getColumnIndex("address"));
@@ -127,7 +127,11 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 							tts.speak(body, 0, null);
 							
 							String SmsMessageId = cur.getString(cur.getColumnIndex("_id"));
-							latestIdByNumber.put(number, SmsMessageId);							
+							if (!alreadySetId)
+							{
+								latestIdByNumber.put(number, SmsMessageId);
+								alreadySetId = true;
+							}
 						} while (cur.moveToNext());
 					}
 					
