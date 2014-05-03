@@ -128,7 +128,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 							String body = cur.getString(cur.getColumnIndex("body"));
 							System.out.println(address);
 							System.out.println(body);
-							tts.speak(body, 0, null);
+							tts.speak(body, 1, null);
 							
 							String SmsMessageId = cur.getString(cur.getColumnIndex("_id"));
 							if (!alreadySetId)
