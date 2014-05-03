@@ -4,20 +4,23 @@ Developed By: Jimmy Bao, Shu Zhong
 CSUA Hackathon 05/02/14 - 05/03/14
 ------------------------------------
 
-Although using your cell phone to text or make phone calls is illegal and EXTREMELY dangerous while driving, 
-many people (including us) still do it. If there is really no way to prevent drivers from using their cell 
-phones while driving, we decided to offer drivers a way to at least do it safely.
+Although using your cell phone to text or make phone calls is illegal and EXTREMELY 
+dangerous while driving, many people (including us) still do it. If there is really 
+no way to prevent drivers from using their cell phones while driving, we decided to 
+offer drivers a way to at least do it safely.
 
-Voicial is a COMPLETELY hands-free Android application that allows users to send and receive text messages, 
-as well as make and receive calls, all via voice commands. The following are commands currently supported
-by Voicial: 
+Voicial is a COMPLETELY hands-free Android application that allows users to send and 
+receive text messages, as well as make and receive calls, all via voice commands. 
+The following are commands currently supported by Voicial: 
 	
 	- "Send text to" RECIPIENT_NAME
 	- "Read text from" RECIPIENT_NAME
 	- "Call" RECIPIENT_NAME
 
-Voicial is the first in its kind to offer a complete hands-free experience for both calling and texting. Products
-like Siri and Google Now are the closest tools prior to Voicial that allows for hands-free communication. However,
-Siri makes the user press the microphone button for every voice command whereas Google Now, who recently integrated 
-the "hot-word" OK-GOOGLE to allow users to make voice commands without pressing any buttons, does not allow users
-to read their text message with voice commands. This makes Voicial the go-to application for hands-free communication!
+Voicial is the first in its kind to offer a complete hands-free experience for both 
+calling and texting. Products like Siri and Google Now are the closest tools prior 
+to Voicial that allows for hands-free communication. However, Siri makes the user 
+press the microphone button for every voice command whereas Google Now, who recently 
+integrated the "hot-word" OK-GOOGLE to allow users to make voice commands without 
+pressing any buttons, does not allow users to read their text message with voice 
+commands. This makes Voicial the go-to application for hands-free communication!
