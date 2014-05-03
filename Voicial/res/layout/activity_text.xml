@@ -9,8 +9,18 @@
     tools:context=".TextActivity" >
 
     <TextView
+        android:id="@+id/resultText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:text="DEFAULT TEXT" />
+
+    <Button
+        android:id="@+id/listenButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/resultsText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="76dp"
+        android:text="Button" />
 
 </RelativeLayout>
