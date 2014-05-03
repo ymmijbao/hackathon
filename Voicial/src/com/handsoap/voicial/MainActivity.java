@@ -16,6 +16,10 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	private static final String END_TXT_CMD = "message done";
 	private static final String CALL_CMD = "call";  
 	
+	private static final int SEND_TXT_OFFSET = 16;
+	private static final int READ_TXT_OFFSET = 18;
+	private static final int CALL_OFFSET = 5;
+	
 	public Button mListenButton;
 	public boolean bIsListening = false;
 	public TextView mResultTextView;
@@ -71,16 +75,36 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 			} else {
 				System.out.print(result);
 			}
-		} else {
+		} else {			
 			if (result.startsWith(READ_TXT_CMD)) {
 				System.out.println("result starts with read!");
-				mContinuousRecognizer.stopListening();
+				String name = result.substring(READ_TXT_OFFSET);
+				String number = ContactLookup.lookUp(name, getApplicationContext());
+				
+				if (number != null) {
+					mContinuousRecognizer.stopListening();
+					// Do something
+				}
+				
 			} else if (result.startsWith(SEND_TXT_CMD)) {
 				System.out.println("result starts with send!");
+				String name = result.substring(SEND_TXT_OFFSET);
 				is_sending_txt = true;
+				String number = ContactLookup.lookUp(name, getApplicationContext());
+				
+				if (number != null) {
+					// Do something
+				}
+				
 			} else if (result.startsWith(CALL_CMD)) {
 				System.out.println("result starts with call!");
+				String name = result.substring(CALL_OFFSET);
 				mContinuousRecognizer.stopListening();
+				String number = ContactLookup.lookUp(name, getApplicationContext());
+				
+				if (number != null) {
+					// Do something
+				}
 			}
 		}	
 	}
