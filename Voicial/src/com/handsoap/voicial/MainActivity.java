@@ -14,6 +14,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.HashMap;
+
 public class MainActivity extends Activity implements MySpeechRecognizer.ContinuousRecognizerCallback {
 	private boolean is_sending_txt = false;
 	
@@ -29,6 +31,8 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	
 	private String cur_num = "";
 	private StringBuilder text_buffer = new StringBuilder(); 
+	
+	private HashMap latestIdByNumber = new HashMap();
 	
 	public Button mListenButton;
 	public boolean bIsListening = false;
@@ -94,10 +98,18 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 			if (result.startsWith(READ_TXT_CMD)) {
 				number = getPhoneNumber(result, READ_TXT_OFFSET);
 				if (number != null) {
+					
 					//mContinuousRecognizer.stopListening();
 					Uri uri = Uri.parse("content://sms/inbox");
 					String[] projection = new String[]{"_id", "address", "person", "body", "date"};
-					Cursor cur = getContentResolver().query(uri, projection, "address='+1" + number + "' AND read=0", null, null);
+					
+					String selector = "address='+1" + number + "' AND read=0";
+					String latestId = (String)latestIdByNumber.get(number);
+					if (latestId != null) {
+						selector += " AND _id > " + latestId;
+					}
+					
+					Cursor cur = getContentResolver().query(uri, projection, selector, null, null);
 					
 					if (cur.moveToFirst()) {
 						do {
@@ -107,11 +119,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 							System.out.println(body);
 							
 							String SmsMessageId = cur.getString(cur.getColumnIndex("_id"));
-							
-							System.out.println(SmsMessageId);
-							ContentValues values = new ContentValues();
-							values.put("read", true);
-							getContentResolver().update(uri, values, "_id=" + SmsMessageId, null);
+							latestIdByNumber.put(number, SmsMessageId);
 							
 							// Do text to speech 
 						} while (cur.moveToNext());
