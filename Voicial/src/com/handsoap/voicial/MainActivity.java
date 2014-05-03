@@ -17,12 +17,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-public class MainActivity extends Activity implements MySpeechRecognizer.ContinuousRecognizerCallback, OnInitListener {
-=======
-import java.util.HashMap;
 
-public class MainActivity extends Activity implements MySpeechRecognizer.ContinuousRecognizerCallback {
->>>>>>> be5ff56f232c7ba11d58d79cc2f8e754b99a5087
+public class MainActivity extends Activity implements MySpeechRecognizer.ContinuousRecognizerCallback, OnInitListener {
 	private boolean is_sending_txt = false;
 	
 	/* User commands must have these following prefixes. */
