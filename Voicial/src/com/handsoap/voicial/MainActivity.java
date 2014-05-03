@@ -24,7 +24,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_text);
+		setContentView(R.layout.activity_text); // Change this later 
 
 		mContinuousRecognizer = new MySpeechRecognizer(getApplicationContext());
 		mContinuousRecognizer.setContinuousRecognizerCallback(this);
