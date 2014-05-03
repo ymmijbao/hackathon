@@ -126,7 +126,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	public void onResult(String result) {
 	    if (is_sending_txt) {
 			if (result.equals(END_TXT_CMD)) {
-				String textToSend = "Your message to " + cur_name + "was" + text_buffer.toString() + "was successully sent.";
+				String textToSend = "Your message to " + cur_name + "was " + text_buffer.toString() + "was successully sent.";
 				SmsManager.getDefault().sendTextMessage(cur_num, null, text_buffer.toString(), null, null);
 				tts.speak(textToSend, 0, null);
 				text_buffer = new StringBuilder(); 
@@ -155,7 +155,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 						do {
 							String address = cur.getString(cur.getColumnIndex("address"));
 							String body = cur.getString(cur.getColumnIndex("body"));
-							tts.speak(cur_name + "said " + body, 1, null);
+							tts.speak(cur_name + "says " + body, 1, null);
 							
 							String SmsMessageId = cur.getString(cur.getColumnIndex("_id"));
 							if (!alreadySetId)
