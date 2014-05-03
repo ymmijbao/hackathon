@@ -5,7 +5,9 @@ import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -42,6 +44,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	
 	public Button mListenButton;
 	public boolean bIsListening = false;
+	private boolean termsAgreed = false;
 	public TextView mResultTextView;
 	private MySpeechRecognizer mContinuousRecognizer;
 	protected static TextToSpeech tts;
@@ -51,6 +54,23 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main); 
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+		builder.setMessage("COMMANDS:\n'Send message to' RECIPIENT\n"
+				+ "'Read message from' RECIPIENT\n"
+				+ "'Call' RECIPIENT").setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				// Does nothing; user accepts terms
+				termsAgreed = true;
+				mContinuousRecognizer.startListening();
+			}
+		}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				finish();
+			}
+		}).setTitle("Always Be Careful When Driving!");
+		
+		builder.create().show();
 		
 		myContext = getApplicationContext();
 		
@@ -78,7 +98,10 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	public void onResume() {
 		super.onResume();
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		mContinuousRecognizer.startListening();
+		
+		if (termsAgreed) {
+			mContinuousRecognizer.startListening();
+		}
 	}
 
 	@Override
