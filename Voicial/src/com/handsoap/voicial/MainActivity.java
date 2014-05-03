@@ -5,12 +5,11 @@ import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Telephony;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.telephony.SmsManager;
@@ -45,12 +44,15 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	public boolean bIsListening = false;
 	public TextView mResultTextView;
 	private MySpeechRecognizer mContinuousRecognizer;
-	private TextToSpeech tts;
+	protected static TextToSpeech tts;
+	protected static Context myContext;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main); 
+		
+		myContext = getApplicationContext();
 		
 		/** Hide the unnecessary ActionBar **/
 		View decorView = getWindow().getDecorView();
@@ -141,9 +143,9 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 								alreadySetId = true;
 							}
 						} while (cur.moveToNext());
+					} else {
+						tts.speak("No new messages from " + cur_name, 1, null);
 					}
-					
-					//mContinuousRecognizer.startListening();
 				}
 			} else if (result.startsWith(SEND_TXT_CMD)) {
 				number = getPhoneNumber(result, SEND_TXT_OFFSET);
