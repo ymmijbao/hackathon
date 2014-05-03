@@ -105,7 +105,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 					mContinuousRecognizer.stopListening();
 					Uri uri = Uri.parse("content://sms/inbox");
 					String[] projection = new String[]{"_id", "address", "person", "body", "date"};
-					Cursor cur = getContentResolver().query(uri, projection, "address='" + number + "'", null, null);
+					Cursor cur = getContentResolver().query(uri, projection, "address='+1" + number + "'", null, null);
 					
 					if (cur.moveToFirst()) {
 						do {
