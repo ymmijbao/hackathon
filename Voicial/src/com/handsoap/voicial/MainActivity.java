@@ -19,6 +19,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements MySpeechRecognizer.ContinuousRecognizerCallback, OnInitListener {
+	private VoicialReceiver recv = new VoicialReceiver();
+	
 	private boolean is_sending_txt = false;
 	
 	/* User commands must have these following prefixes. */
@@ -59,6 +61,9 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 		/** Creating the Text-to_Speech object **/
 		tts = new TextToSpeech(this, this);
 		tts.setLanguage(Locale.US);
+		
+		/** Register a new broadcast receiver so that we're notified of incoming SMS messages. **/
+		registerReceiver(recv, null);
 	}
 
 	@Override
