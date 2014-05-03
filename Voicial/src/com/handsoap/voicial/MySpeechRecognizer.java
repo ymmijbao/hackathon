@@ -15,7 +15,7 @@ public class MySpeechRecognizer implements RecognitionListener {
 	private Context mContext;
 	private SpeechRecognizer mRecognizer;
 	private ContinuousRecognizerCallback mCallback;
-
+	
 	public interface ContinuousRecognizerCallback {
 		void onResult(String result);
 	}
@@ -82,7 +82,7 @@ public class MySpeechRecognizer implements RecognitionListener {
 	}
 
 	@Override
-	public void onResults(Bundle results) {
+	public void onResults(Bundle results) {	
 		ArrayList<String> strings = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 		for (String str : strings) {
 			Log.d(TAG, "result=" + str);
@@ -92,7 +92,7 @@ public class MySpeechRecognizer implements RecognitionListener {
 		if (mCallback != null) {
 			mCallback.onResult(strings.get(0));
 		}
-
+		
 		listen();
 	}
 

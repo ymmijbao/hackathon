@@ -9,11 +9,17 @@ import android.widget.TextView;
 
 public class TextActivity extends Activity implements MySpeechRecognizer.ContinuousRecognizerCallback {
 
+	private static final int ON_CMD = (1 << 0);
+	private static final int ON_TXT = (1 << 1);
+	private static final int ON_CALL = (1 << 2);
+	
+	private char state = 0;
+	
 	public Button mListenButton;
 	public boolean bIsListening = false;
 	public TextView mResultTextView;
 	private MySpeechRecognizer mContinuousRecognizer;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -57,7 +63,7 @@ public class TextActivity extends Activity implements MySpeechRecognizer.Continu
 
 	@Override
 	public void onResult(String result) {
-		String[] speech_result = result.split("");
+		String[] speech_result = result.split(" ");
 		if ((speech_result[0].equals("send")) && (speech_result[1].equals("message")) && (speech_result[2].equals("to"))) {
 			sendMessage(speech_result); 
 		}
