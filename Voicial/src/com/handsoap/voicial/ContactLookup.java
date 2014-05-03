@@ -49,6 +49,6 @@ public class ContactLookup {
 	    
 	    cursor.close();
 	    
-	    return number;
+	    return number.replace("-", "");
 	}
 }

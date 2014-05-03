@@ -21,6 +21,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	private static final int READ_TXT_OFFSET = 18;
 	private static final int CALL_OFFSET = 5;
 	
+	private String cur_num = "";
 	private StringBuilder text_buffer = new StringBuilder(); 
 	
 	public Button mListenButton;
@@ -73,12 +74,13 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	public void onResult(String result) {	
 		if (is_sending_txt) {
 			if (result.equals(END_TXT_CMD)) {
-				SmsManager.getDefault().sendTextMessage("3182781465", null, text_buffer.toString(), null, null);
+				SmsManager.getDefault().sendTextMessage(cur_num, null, text_buffer.toString(), null, null);
 				text_buffer = new StringBuilder();
+				cur_num = "";
 				is_sending_txt = false;
 			} else {
 				System.out.print(result);
-				text_buffer.append(result);
+				text_buffer.append(result + " ");
 			}
 		} else {			
 			if (result.startsWith(READ_TXT_CMD)) {
@@ -94,13 +96,12 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 			} else if (result.startsWith(SEND_TXT_CMD)) {
 				System.out.println("result starts with send!");
 				String name = result.substring(SEND_TXT_OFFSET);
-				is_sending_txt = true;
 				String number = ContactLookup.lookUp(name, getApplicationContext());
 				
 				if (number != null) {
-					SmsManager.getDefault().sendTextMessage(number.replace("-", ""), null, "wassup bitch", null, null);
+					is_sending_txt = true;
+					cur_num = number;
 				}
-				
 			} else if (result.startsWith(CALL_CMD)) {
 				System.out.println("result starts with call!");
 				String name = result.substring(CALL_OFFSET);
