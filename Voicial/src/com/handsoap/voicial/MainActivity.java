@@ -25,13 +25,13 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	private boolean is_sending_txt = false;
 	
 	/* User commands must have these following prefixes. */
-	private static final String SEND_TXT_CMD = "send message to";
-	private static final String READ_TXT_CMD = "read message from";
-	private static final String END_TXT_CMD = "message done";
+	private static final String SEND_TXT_CMD = "send text to";
+	private static final String READ_TXT_CMD = "read text from";
+	private static final String END_TXT_CMD = "text done";
 	private static final String CALL_CMD = "call";  
 	
-	private static final int SEND_TXT_OFFSET = 16;
-	private static final int READ_TXT_OFFSET = 18;
+	private static final int SEND_TXT_OFFSET = 13;
+	private static final int READ_TXT_OFFSET = 15;
 	private static final int CALL_OFFSET = 5;
 	
 	private String cur_num = "";
