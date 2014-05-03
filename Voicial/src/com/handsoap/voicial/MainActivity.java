@@ -2,6 +2,7 @@ package com.handsoap.voicial;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -93,7 +94,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 				String number = ContactLookup.lookUp(name, getApplicationContext());
 				
 				if (number != null) {
-					// Do something
+					SmsManager.getDefault().sendTextMessage(number, null, "wassup bitch", null, null);
 				}
 				
 			} else if (result.startsWith(CALL_CMD)) {
