@@ -7,8 +7,10 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.telephony.SmsManager;
@@ -34,6 +36,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	private static final int CALL_OFFSET = 5;
 	
 	private String cur_num = "";
+	private String cur_name = "";
 	private StringBuilder text_buffer = new StringBuilder(); 
 	
 	private HashMap latestIdByNumber = new HashMap();
@@ -89,19 +92,20 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	private String getPhoneNumber(String result, int offset)
 	{
 		String name = result.substring(offset);
+		cur_name = name;
 		return ContactLookup.lookUp(name, getApplicationContext());
 	}
 	
 	@Override
-	public void onResult(String result) {	
+	public void onResult(String result) {
 	    if (is_sending_txt) {
 			if (result.equals(END_TXT_CMD)) {
+				String textToSend = "Your message to " + cur_name + "was" + text_buffer.toString() + "was successully sent.";
 				SmsManager.getDefault().sendTextMessage(cur_num, null, text_buffer.toString(), null, null);
+				tts.speak(textToSend, 0, null);
 				text_buffer = new StringBuilder(); 
 				cur_num = "";
 				is_sending_txt = false;
-				
-				// Do text to speech to confirm or edit message or something
 			} else {
 				text_buffer.append(result + " ");
 			}
