@@ -1,7 +1,9 @@
 package com.handsoap.voicial;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.View;
@@ -62,6 +64,12 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 		bIsListening = false;
 		mListenButton.setText("Listen");
 	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		mContinuousRecognizer.startListening();
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -105,11 +113,13 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 			} else if (result.startsWith(CALL_CMD)) {
 				System.out.println("result starts with call!");
 				String name = result.substring(CALL_OFFSET);
-				mContinuousRecognizer.stopListening();
 				String number = ContactLookup.lookUp(name, getApplicationContext());
 				
 				if (number != null) {
-					// Do something
+					mContinuousRecognizer.stopListening();
+					Intent callIntent = new Intent(Intent.ACTION_CALL);
+					callIntent.setData(Uri.parse("tel:"+number));
+					startActivity(callIntent);
 				}
 			}
 		}	
