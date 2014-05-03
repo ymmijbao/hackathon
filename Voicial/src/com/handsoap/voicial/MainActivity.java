@@ -94,7 +94,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 				String number = ContactLookup.lookUp(name, getApplicationContext());
 				
 				if (number != null) {
-					SmsManager.getDefault().sendTextMessage(number, null, "wassup bitch", null, null);
+					SmsManager.getDefault().sendTextMessage(number.replace("-", ""), null, "wassup bitch", null, null);
 				}
 				
 			} else if (result.startsWith(CALL_CMD)) {
