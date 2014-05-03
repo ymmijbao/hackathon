@@ -23,6 +23,8 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	private static final int READ_TXT_OFFSET = 18;
 	private static final int CALL_OFFSET = 5;
 	
+	private StringBuilder text_buffer = new StringBuilder(); 
+	
 	public Button mListenButton;
 	public boolean bIsListening = false;
 	public TextView mResultTextView;
@@ -79,10 +81,12 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	public void onResult(String result) {	
 		if (is_sending_txt) {
 			if (result.equals(END_TXT_CMD)) {
-				System.out.println("ending txt!");
+				SmsManager.getDefault().sendTextMessage("3182781465", null, text_buffer.toString(), null, null);
+				text_buffer = new StringBuilder();
 				is_sending_txt = false;
 			} else {
 				System.out.print(result);
+				text_buffer.append(result);
 			}
 		} else {			
 			if (result.startsWith(READ_TXT_CMD)) {
