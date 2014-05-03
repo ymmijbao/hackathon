@@ -3,6 +3,7 @@ package com.handsoap.voicial;
 import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -102,6 +103,20 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 				number = getPhoneNumber(result, READ_TXT_OFFSET);
 				if (number != null) {
 					mContinuousRecognizer.stopListening();
+					Uri uri = Uri.parse("content://sms/inbox");
+					String[] projection = new String[]{"_id", "address", "person", "body", "date"};
+					Cursor cur = getContentResolver().query(uri, projection, "address='" + number + "'", null, null);
+					
+					if (cur.moveToFirst()) {
+						do {
+							String address = cur.getString(cur.getColumnIndex("address"));
+							String body = cur.getString(cur.getColumnIndex("body"));
+							System.out.println(address);
+							System.out.println(body);
+						} while (cur.moveToNext());
+					}
+					
+					mContinuousRecognizer.startListening();
 				}
 			} else if (result.startsWith(SEND_TXT_CMD)) {
 				number = getPhoneNumber(result, SEND_TXT_OFFSET);
