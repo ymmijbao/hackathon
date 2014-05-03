@@ -13,7 +13,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	/* User commands must have these following prefixes. */
 	private static final String SEND_TXT_CMD = "send message to";
 	private static final String READ_TXT_CMD = "read message from";
-	private static final String END_TXT_CMD = "end message";
+	private static final String END_TXT_CMD = "message done";
 	private static final String CALL_CMD = "call";  
 	
 	public Button mListenButton;
@@ -68,7 +68,8 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 			if (result.equals(END_TXT_CMD)) {
 				System.out.println("ending txt!");
 				is_sending_txt = false;
-			    mContinuousRecognizer.startListening();
+			} else {
+				System.out.print(result);
 			}
 		} else {
 			if (result.startsWith(READ_TXT_CMD)) {
