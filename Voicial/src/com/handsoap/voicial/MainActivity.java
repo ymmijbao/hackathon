@@ -1,10 +1,10 @@
 package com.handsoap.voicial;
 
+import java.util.HashMap;
 import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,8 +17,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-
 public class MainActivity extends Activity implements MySpeechRecognizer.ContinuousRecognizerCallback, OnInitListener {
+=======
+import java.util.HashMap;
+
+public class MainActivity extends Activity implements MySpeechRecognizer.ContinuousRecognizerCallback {
+>>>>>>> be5ff56f232c7ba11d58d79cc2f8e754b99a5087
 	private boolean is_sending_txt = false;
 	
 	/* User commands must have these following prefixes. */
@@ -33,6 +37,8 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	
 	private String cur_num = "";
 	private StringBuilder text_buffer = new StringBuilder(); 
+	
+	private HashMap latestIdByNumber = new HashMap();
 	
 	public Button mListenButton;
 	public boolean bIsListening = false;
@@ -103,10 +109,18 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 			if (result.startsWith(READ_TXT_CMD)) {
 				number = getPhoneNumber(result, READ_TXT_OFFSET);
 				if (number != null) {
+					
 					//mContinuousRecognizer.stopListening();
 					Uri uri = Uri.parse("content://sms/inbox");
 					String[] projection = new String[]{"_id", "address", "person", "body", "date"};
-					Cursor cur = getContentResolver().query(uri, projection, "address='+1" + number + "' AND read=0", null, null);
+					
+					String selector = "address='+1" + number + "' AND read=0";
+					String latestId = (String)latestIdByNumber.get(number);
+					if (latestId != null) {
+						selector += " AND _id > " + latestId;
+					}
+					
+					Cursor cur = getContentResolver().query(uri, projection, selector, null, null);
 					
 					if (cur.moveToFirst()) {
 						do {
@@ -117,11 +131,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 							tts.speak(body, 0, null);
 							
 							String SmsMessageId = cur.getString(cur.getColumnIndex("_id"));
-							ContentValues values = new ContentValues();
-							values.put("read", true);
-							getContentResolver().update(uri, values, "_id=" + SmsMessageId, null);
-							
-							
+							latestIdByNumber.put(number, SmsMessageId);							
 						} while (cur.moveToNext());
 					}
 					
