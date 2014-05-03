@@ -24,6 +24,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	private static final int READ_TXT_OFFSET = 18;
 	private static final int CALL_OFFSET = 5;
 	
+	private String cur_num = "";
 	private StringBuilder text_buffer = new StringBuilder(); 
 	
 	public Button mListenButton;
@@ -82,8 +83,9 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	public void onResult(String result) {	
 		if (is_sending_txt) {
 			if (result.equals(END_TXT_CMD)) {
-				SmsManager.getDefault().sendTextMessage("3182781465", null, text_buffer.toString(), null, null);
+				SmsManager.getDefault().sendTextMessage(cur_num, null, text_buffer.toString(), null, null);
 				text_buffer = new StringBuilder();
+				cur_num = "";
 				is_sending_txt = false;
 			} else {
 				System.out.print(result);
@@ -107,8 +109,8 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 				
 				if (number != null) {
 					is_sending_txt = true;
+					cur_num = number;
 				}
-				
 			} else if (result.startsWith(CALL_CMD)) {
 				System.out.println("result starts with call!");
 				String name = result.substring(CALL_OFFSET);
