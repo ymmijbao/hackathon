@@ -11,9 +11,10 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	private boolean is_sending_txt = false;
 	
 	/* User commands must have these following prefixes. */
-	private static final String SEND = "send message to";
-	private static final String READ = "read message from";
-	private static final String CALL = "call";  
+	private static final String SEND_TXT_CMD = "send message to";
+	private static final String READ_TXT_CMD = "read message from";
+	private static final String END_TXT_CMD = "end message";
+	private static final String CALL_CMD = "call";  
 	
 	public Button mListenButton;
 	public boolean bIsListening = false;
@@ -64,16 +65,19 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	@Override
 	public void onResult(String result) {	
 		if (is_sending_txt) {
-			
+			if (result.equals(END_TXT_CMD)) {
+				System.out.println("ending txt!");
+				is_sending_txt = false;
+			    mContinuousRecognizer.startListening();
+			}
 		} else {
-			result = result.toLowerCase();
-			if (result.startsWith(READ)) {
+			if (result.startsWith(READ_TXT_CMD)) {
 				System.out.println("result starts with read!");
 				mContinuousRecognizer.stopListening();
-			} else if (result.startsWith(SEND)) {
+			} else if (result.startsWith(SEND_TXT_CMD)) {
 				System.out.println("result starts with send!");
 				is_sending_txt = true;
-			} else if (result.startsWith(CALL)) {
+			} else if (result.startsWith(CALL_CMD)) {
 				System.out.println("result starts with call!");
 				mContinuousRecognizer.stopListening();
 			}
