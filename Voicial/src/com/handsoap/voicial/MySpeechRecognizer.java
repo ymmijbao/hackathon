@@ -36,7 +36,6 @@ public class MySpeechRecognizer implements RecognitionListener {
 	}
 
 	public void stopListening() {
-		System.out.println("Printing this shit!");
 		mRecognizer.stopListening();
 		mRecognizer.cancel();
 	}
