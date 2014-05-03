@@ -1,5 +1,7 @@
 package com.handsoap.voicial;
 
+import java.util.Locale;
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -7,6 +9,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.TextToSpeech.OnInitListener;
 import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.View;
@@ -14,7 +18,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements MySpeechRecognizer.ContinuousRecognizerCallback {
+public class MainActivity extends Activity implements MySpeechRecognizer.ContinuousRecognizerCallback, OnInitListener {
 	private boolean is_sending_txt = false;
 	
 	/* User commands must have these following prefixes. */
@@ -34,6 +38,7 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	public boolean bIsListening = false;
 	public TextView mResultTextView;
 	private MySpeechRecognizer mContinuousRecognizer;
+	private TextToSpeech tts;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,10 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 
 		mContinuousRecognizer = new MySpeechRecognizer(getApplicationContext());
 		mContinuousRecognizer.setContinuousRecognizerCallback(this);
+		
+		/** Creating the Text-to_Speech object **/
+		tts = new TextToSpeech(this, this);
+		tts.setLanguage(Locale.US);
 	}
 
 	@Override
@@ -105,15 +114,14 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 							String body = cur.getString(cur.getColumnIndex("body"));
 							System.out.println(address);
 							System.out.println(body);
+							tts.speak(body, 0, null);
 							
 							String SmsMessageId = cur.getString(cur.getColumnIndex("_id"));
-							
-							System.out.println(SmsMessageId);
 							ContentValues values = new ContentValues();
 							values.put("read", true);
 							getContentResolver().update(uri, values, "_id=" + SmsMessageId, null);
 							
-							// Do text to speech 
+							
 						} while (cur.moveToNext());
 					}
 					
@@ -135,5 +143,11 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 				}
 			}
 		}	
+	}
+
+	@Override
+	public void onInit(int status) {
+		// TODO Auto-generated method stub
+		
 	}
 }
