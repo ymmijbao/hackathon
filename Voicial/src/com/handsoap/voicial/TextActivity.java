@@ -57,8 +57,29 @@ public class TextActivity extends Activity implements MySpeechRecognizer.Continu
 
 	@Override
 	public void onResult(String result) {
+		String[] speech_result = result.split("");
+		if ((speech_result[0].equals("send")) && (speech_result[1].equals("message")) && (speech_result[2].equals("to"))) {
+			sendMessage(speech_result); 
+		}
+		
+		
+		
+		
+		/**
 		String s = (String) mResultTextView.getText();
 		s = s + "\n" + result;
 		mResultTextView.setText(s);
+		**/
+		
+		
+		
+	}
+	
+	public void readMessage() {
+		// TODO
+	}
+	
+	public void sendMessage(String[] result) {
+		// TODO
 	}
 }
