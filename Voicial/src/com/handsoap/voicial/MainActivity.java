@@ -78,43 +78,38 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 		return true;
 	}
 
+	private String getPhoneNumber(String result, int offset)
+	{
+		String name = result.substring(offset);
+		return ContactLookup.lookUp(name, getApplicationContext());
+	}
+	
 	@Override
 	public void onResult(String result) {	
-		if (is_sending_txt) {
+	    if (is_sending_txt) {
 			if (result.equals(END_TXT_CMD)) {
 				SmsManager.getDefault().sendTextMessage(cur_num, null, text_buffer.toString(), null, null);
-				text_buffer = new StringBuilder();
+				text_buffer = new StringBuilder(); 
 				cur_num = "";
 				is_sending_txt = false;
 			} else {
-				System.out.print(result);
 				text_buffer.append(result + " ");
 			}
-		} else {			
+		} else {
+			String number = null;
 			if (result.startsWith(READ_TXT_CMD)) {
-				System.out.println("result starts with read!");
-				String name = result.substring(READ_TXT_OFFSET);
-				String number = ContactLookup.lookUp(name, getApplicationContext());
-				
+				number = getPhoneNumber(result, READ_TXT_OFFSET);
 				if (number != null) {
 					mContinuousRecognizer.stopListening();
-					// Do something
 				}
-				
 			} else if (result.startsWith(SEND_TXT_CMD)) {
-				System.out.println("result starts with send!");
-				String name = result.substring(SEND_TXT_OFFSET);
-				String number = ContactLookup.lookUp(name, getApplicationContext());
-				
+				number = getPhoneNumber(result, SEND_TXT_OFFSET);
 				if (number != null) {
 					is_sending_txt = true;
 					cur_num = number;
 				}
 			} else if (result.startsWith(CALL_CMD)) {
-				System.out.println("result starts with call!");
-				String name = result.substring(CALL_OFFSET);
-				String number = ContactLookup.lookUp(name, getApplicationContext());
-				
+				number = getPhoneNumber(result, CALL_OFFSET);
 				if (number != null) {
 					mContinuousRecognizer.stopListening();
 					Intent callIntent = new Intent(Intent.ACTION_CALL);
