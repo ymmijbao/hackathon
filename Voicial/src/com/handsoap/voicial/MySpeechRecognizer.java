@@ -99,6 +99,8 @@ public class MySpeechRecognizer implements RecognitionListener {
 		for (String str : strings) {
 			String[] command = str.split(" ");
 			
+			Log.d(TAG, "Result is " + str);
+			
 			if ((command.length > 3) && (command[0].equals("send")) && (command[1].equals("text")) && (command[2].equals("to"))) {
 				String name = command[command.length -2] + " " + command[command.length - 1].toLowerCase();
 				
@@ -106,16 +108,15 @@ public class MySpeechRecognizer implements RecognitionListener {
 					contactExists = true;
 					break;
 				} else {
-					MainActivity.tts.speak("The contact" + name + "does not exist. Try again", 0, null);
+					MainActivity.tts.speak("The contact does not exist. Try again.", 0, null);
 					bestMatch++;
 				}
 			} else if ((command[0].equals("call")) || (command[0].equals("read")) && (command[1].equals("text")) && (command[2].equals("from"))) {
 				validCommand = true;
+				bestMatch = 0;
 			}
-			
-			Log.d(TAG, "Result is " + str);
 		}
-					
+			
 		if (((contactExists) || (validCommand)) && (mCallback != null)) {
 			validCommand = false;
 			mCallback.onResult(strings.get(bestMatch));

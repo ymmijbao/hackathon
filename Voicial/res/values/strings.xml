@@ -4,8 +4,8 @@
     <string name="app_name">Voicial</string>
     <string name="action_settings">Settings</string>
     <string name="command">Commands:</string>
-    <string name="send_message">Send message to NAME [MSG] message done</string>
-    <string name="read_message">Read message from NAME</string>
+    <string name="send_message">Send text to NAME [MSG] text done</string>
+    <string name="read_message">Read text from NAME</string>
     <string name="make_call">Call NAME</string>
 
 </resources>
