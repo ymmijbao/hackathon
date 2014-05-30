@@ -15,6 +15,8 @@ public class MySpeechRecognizer implements RecognitionListener {
 	private Context mContext;
 	private SpeechRecognizer mRecognizer;
 	private ContinuousRecognizerCallback mCallback;
+	protected static boolean contactExists = false;
+	protected static int bestMatch = 0;
 	
 	public interface ContinuousRecognizerCallback {
 		void onResult(String result);
@@ -92,18 +94,39 @@ public class MySpeechRecognizer implements RecognitionListener {
 	@Override
 	public void onResults(Bundle results) {	
 		ArrayList<String> strings = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+		boolean validCommand = false;
+		
 		for (String str : strings) {
-			Log.d(TAG, "result=" + str);
+			String[] command = str.split(" ");
+			
+			if ((command.length > 3) && (command[0].equals("send")) && (command[1].equals("text")) && (command[2].equals("to"))) {
+				String name = command[command.length -2] + " " + command[command.length - 1].toLowerCase();
+				
+				if (MainActivity.contactsList.containsKey(name)) {
+					contactExists = true;
+					break;
+				} else {
+					MainActivity.tts.speak("The contact" + name + "does not exist. Try again", 0, null);
+					bestMatch++;
+				}
+			} else if ((command[0].equals("call")) || (command[0].equals("read")) && (command[1].equals("text")) && (command[2].equals("from"))) {
+				validCommand = true;
+			}
+			
+			Log.d(TAG, "Result is " + str);
 		}
-
-		// Google returns the best result as the first result it seems
-		if (mCallback != null) {
-			mCallback.onResult(strings.get(0));
+					
+		if (((contactExists) || (validCommand)) && (mCallback != null)) {
+			validCommand = false;
+			mCallback.onResult(strings.get(bestMatch));
+		} else {
+			contactExists = false;
+			bestMatch = 0;
 		}
 		
 		listen();
 	}
-
+			
 	@Override
 	public void onRmsChanged(float arg0) {
 		// AUTO-GENERATED STUB

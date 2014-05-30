@@ -6,19 +6,26 @@ import java.util.Locale;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements MySpeechRecognizer.ContinuousRecognizerCallback, OnInitListener {
@@ -41,6 +48,9 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	private StringBuilder text_buffer = new StringBuilder(); 
 	
 	private HashMap latestIdByNumber = new HashMap();
+	protected static HashMap<String, String> contactsList = new HashMap();
+	
+	private Animation mAnimation;
 	
 	public Button mListenButton;
 	public boolean bIsListening = false;
@@ -74,6 +84,47 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 		
 		myContext = getApplicationContext();
 		
+		/** Adding all the contact information into the contactsList HashMap **/
+		ContentResolver mContentResolver = getContentResolver();
+		Cursor mCursor = mContentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+		
+		if (mCursor.getCount() > 0) {
+			while (mCursor.moveToNext()) {
+				String contactId = mCursor.getString(mCursor.getColumnIndex(ContactsContract.Contacts._ID));
+				String contactName = mCursor.getString(mCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+				String contactNumber = null;
+				
+				if (Integer.parseInt(mCursor.getString(mCursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+					System.out.println("The name is " + contactName);
+					
+					Cursor pCur = mContentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?", new String[]{contactId}, null);
+					
+			    	PHONE_LOOP: while (pCur.moveToNext()) {
+			    		contactNumber = pCur.getString(pCur.getColumnIndex(Phone.NUMBER));
+			    		int type = pCur.getInt(pCur.getColumnIndex(Phone.TYPE));
+						  
+						switch (type) {
+						    case Phone.TYPE_MOBILE:
+						    	break PHONE_LOOP;
+						    default:
+						    	break;
+						}
+			    	}
+					
+					pCur.close();
+				}
+				
+				if (contactNumber != null) {
+					contactNumber = contactNumber.replace("-", "");
+					contactsList.put(contactName.toLowerCase(), contactNumber);
+				}
+			}
+		}
+		
+		mCursor.close();
+		
+		System.out.println(contactsList);
+		
 		/** Hide the unnecessary ActionBar **/
 		View decorView = getWindow().getDecorView();
 		decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
@@ -86,6 +137,15 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 		/** Creating the Text-to_Speech object **/
 		tts = new TextToSpeech(this, this);
 		tts.setLanguage(Locale.US);
+		
+		/** Adding animation to the Recording button **/
+		mAnimation = new AlphaAnimation(1,0);
+		mAnimation.setDuration(500);
+		mAnimation.setInterpolator(new LinearInterpolator());
+		mAnimation.setRepeatCount(Animation.INFINITE);
+		mAnimation.setRepeatMode(Animation.REVERSE);
+		ImageView micrphone = (ImageView) findViewById(R.id.microphone);
+		micrphone.startAnimation(mAnimation);
 	}
 
 	@Override
@@ -126,6 +186,8 @@ public class MainActivity extends Activity implements MySpeechRecognizer.Continu
 	public void onResult(String result) {
 	    if (is_sending_txt) {
 			if (result.equals(END_TXT_CMD)) {
+				MySpeechRecognizer.contactExists = false;
+				MySpeechRecognizer.bestMatch = 0;
 				String textToSend = "Your message to " + cur_name + "was " + text_buffer.toString() + "was successully sent.";
 				SmsManager.getDefault().sendTextMessage(cur_num, null, text_buffer.toString(), null, null);
 				tts.speak(textToSend, 0, null);

@@ -1,18 +1,48 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background = "@drawable/voicial_home"
+    android:background="@drawable/background"
+    android:orientation="vertical"
+    android:windowActionBar="false"
+    android:paddingTop="165dp"
     tools:context=".MainActivity" >
-
-    <ProgressBar
-        android:id="@+id/progressBar1"
-        style="?android:attr/progressBarStyleLarge"
+    
+    <TextView
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:text="@string/command"
+    	style="?android:listSeparatorTextViewStyle" />
+    
+    <TextView 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/send_message" />
+    
+  	<TextView 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/read_message" />
+  	
+  	<TextView 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/make_call" />
+  	
+ 	<ImageView
+        android:id="@+id/microphone"
         android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:color="#000000"
-        android:layout_marginBottom="110dp" />
+        android:layout_height="250dp"
+        android:paddingTop="70dp"
+        android:orientation="vertical"
+    	android:layout_gravity="center_horizontal"
+        android:src="@drawable/microphone" />
+	
 
-</RelativeLayout>
+</LinearLayout>
